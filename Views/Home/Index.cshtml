@@ -1,0 +1,62 @@
+﻿@model netdemo.Models.Cliente
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="bi bi-controller"></i> Registro de Jugadores de Valorant</h4>
+                </div>
+                <div class="card-body">
+                    <form id="formulario">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre completo</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edad" class="form-label">Edad</label>
+                            <input type="number" id="edad" name="edad" class="form-control" required min="10">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="frecuencia" class="form-label">Frecuencia de juego</label>
+                            <select id="frecuencia" name="frecuencia" class="form-select">
+                                <option value="Diario">Diario</option>
+                                <option value="Semanal">Semanal</option>
+                                <option value="Mensual">Mensual</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="anios" class="form-label">Años de juego</label>
+                            <input type="number" id="anios" name="anios" class="form-control" required min="0">
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Enviar
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div id="respuesta" class="fw-bold text-success"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("formulario").addEventListener("submit", function (event) {
+            event.preventDefault();
+            let nombre = document.getElementById("nombre").value;
+            document.getElementById("respuesta").innerText =
+                `Gracias ${nombre} por haberte registrado a Riot Games`;
+        });
+    </script>
+}
+
