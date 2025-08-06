@@ -2,45 +2,69 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using netdemo.Models;
 
-namespace netdemo.Controllers;
-
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    public IActionResult Registrar(String nombre)
-    {
-        ViewData["mensaje1"] = "Hola como estas bienvenido " +nombre;
-        return View("Index");
-    }
-
-    public IActionResult RegistrarCliente(Cliente cliente)
-    {
-        if(ModelState.IsValid)
+private static Dictionary<string, List<Pelicula>> baseDatos = new()
+{
+    { "Acción", new List<Pelicula>
         {
-            ViewData["mensaje2"] = "Hola como estas bienvenido como has estado " +cliente.Nombre + " " + cliente.Apellido;
+            new Pelicula { Titulo = "John Wick", Director = "Chad Stahelski", Categoria = "Acción" },
+            new Pelicula { Titulo = "Mad Max: Fury Road", Director = "George Miller", Categoria = "Acción" },
+            new Pelicula { Titulo = "Gladiator", Director = "Ridley Scott", Categoria = "Acción" },
+            new Pelicula { Titulo = "Die Hard", Director = "John McTiernan", Categoria = "Acción" }
         }
-        return View("Index");
+    },
+    { "Comedia", new List<Pelicula>
+        {
+            new Pelicula { Titulo = "The Mask", Director = "Chuck Russell", Categoria = "Comedia" },
+            new Pelicula { Titulo = "Superbad", Director = "Greg Mottola", Categoria = "Comedia" },
+            new Pelicula { Titulo = "Step Brothers", Director = "Adam McKay", Categoria = "Comedia" },
+            new Pelicula { Titulo = "The Hangover", Director = "Todd Phillips", Categoria = "Comedia" }
+        }
+    },
+    { "Drama", new List<Pelicula>
+        {
+            new Pelicula { Titulo = "The Shawshank Redemption", Director = "Frank Darabont", Categoria = "Drama" },
+            new Pelicula { Titulo = "Forrest Gump", Director = "Robert Zemeckis", Categoria = "Drama" },
+            new Pelicula { Titulo = "The Godfather", Director = "Francis Ford Coppola", Categoria = "Drama" },
+            new Pelicula { Titulo = "Fight Club", Director = "David Fincher", Categoria = "Drama" }
+        }
+    }
+};
+
+    public IActionResult Index(string categoria = null)
+    {
+        var model = new CategoriaViewModel
+        {
+            Categorias = baseDatos.Keys.ToList(),
+            CategoriaSeleccionada = categoria,
+            Peliculas = categoria != null && baseDatos.ContainsKey(categoria)
+                ? baseDatos[categoria]
+                : new List<Pelicula>()
+        };
+        return View(model);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Agregar()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new Pelicula());
+    }
+
+    [HttpPost]
+    public IActionResult Agregar(Pelicula peli)
+    {
+        if (string.IsNullOrWhiteSpace(peli.Titulo) || string.IsNullOrWhiteSpace(peli.Director) || string.IsNullOrWhiteSpace(peli.Categoria))
+        {
+            ViewBag.Mensaje = "Por favor, complete todos los campos.";
+            return View(peli);
+        }
+
+        // Aquí podrías guardar en base de datos real
+        return RedirectToAction("Gracias");
+    }
+
+    public IActionResult Gracias()
+    {
+        return View();
     }
 }
